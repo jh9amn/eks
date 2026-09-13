@@ -1,3 +1,4 @@
+## Terraform Configuration for EKS Cluster
 terraform {
   required_providers {
     aws = {
@@ -7,18 +8,21 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "demo-jh9amn-terraform-eks-state-s3-bucket"
+    bucket         = "demo-terraform-eks-state-s3-bucket"
     key            = "terraform.tfstate"
     region         = "us-west-2"
     dynamodb_table = "terraform-eks-state-locks"
     encrypt        = true
+    use_lockfile   = true
   }
 }
 
+## Provider Configuration
 provider "aws" {
   region = var.region
 }
 
+## VPC Modules
 module "vpc" {
   source = "./modules/vpc"
 
@@ -29,6 +33,7 @@ module "vpc" {
   cluster_name         = var.cluster_name
 }
 
+## EKS Cluster Module
 module "eks" {
   source = "./modules/eks"
 
